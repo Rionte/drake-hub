@@ -7,6 +7,7 @@ game:GetService("StarterGui"):SetCore("SendNotification",{
 
 -- Tabs
 local general = Window:NewTab("General")
+local pilpir = Window:NewTab("Pilfering Pirates")
 
 -- Sections
 local welcome_message = general:NewSection("Welcome, " .. game.Players.LocalPlayer.Name .. "!")
