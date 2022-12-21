@@ -5,7 +5,7 @@ game:GetService("StarterGui"):SetCore("SendNotification",{
 	Text = "Thank you for using Drake Hub, " .. game.Players.LocalPlayer.Name .. "!",
 })
 
-local general = Window:NewTab("general")
+local general = Window:NewTab("General")
 
 local welcome_message = general:NewSection("Welcome, " .. game.Players.LocalPlayer.Name .. "!")
 
