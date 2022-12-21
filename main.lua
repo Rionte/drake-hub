@@ -5,10 +5,13 @@ game:GetService("StarterGui"):SetCore("SendNotification",{
 	Text = "Thank you for using Drake Hub, " .. game.Players.LocalPlayer.Name .. "!",
 })
 
+-- Tabs
 local general = Window:NewTab("General")
 
+-- Sections
 local welcome_message = general:NewSection("Welcome, " .. game.Players.LocalPlayer.Name .. "!")
 
+-- Buttons
 DiscordSec:NewButton("Copy Discord Link", "Copies the discord server link to your clipboard", function()
 	setclipboard("https://discord.gg/A5TrBCXsav")
 end)
