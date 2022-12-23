@@ -1,4 +1,8 @@
---local ss = loadstring(game:HttpGet("https://raw.githubusercontent.com/exxtremestuffs/SimpleSpySource/master/SimpleSpy.lua"))()
+local ss = loadstring(game:HttpGet("https://raw.githubusercontent.com/exxtremestuffs/SimpleSpySource/master/SimpleSpy.lua"))()
+game.CoreGui:FindFirstChild("SimpleSpy2"):Destroy()
+SimpleSpy:ExcludeRemote("ChangeNeckWeld")
+SimpleSpy:ExcludeRemote("GetBiome")
+SimpleSpy:ExcludeRemote("GetChunk")
 
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
 local Window = Library.CreateLib("Drake Hub", "Sentinel")
@@ -6,7 +10,6 @@ local UserInputService = game:GetService("UserInputService")
 local lplayer = game.Workspace:FindFirstChild(game.Players.LocalPlayer.Name)
 local pname = game.Players.LocalPlayer.Name
 local kaDistance = 10;
-local kaSpeed = 1;
 local kaState = false;
 local bhopState = false;
 
@@ -88,7 +91,7 @@ killaurasection:NewKeybind("Killaura", "Activate Killaura", Enum.KeyCode.G, func
             end
         end
         
-        wait(0.3)
+        wait(1)
     end
 end)
 
@@ -167,7 +170,13 @@ world:NewButton("Ore Scanner", "Find all ores in a radius", function()
 end)
 
 world:NewButton("Godmode", "Become Jesus Himself", function()
-    
+    SimpleSpy:BlockRemote("Demo")
+end)
+
+world:NewButton("Fullbright", "Brighten up the world!", function()
+    light = Instance.new("PointLight")
+    light.Brightness = 10
+    light.Parent = lplayer.HumanoidRootPart
 end)
 
 local suicide = world:NewButton("Suicide", "Kills the player!", function()
