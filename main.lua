@@ -2,7 +2,6 @@ local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHept
 local Window = Library.CreateLib("Drake Hub", "Sentinel")
 local UserInputService = game:GetService("UserInputService")
 local lplayer = game.Workspace:WaitForChild(game.Players.LocalPlayer.Name)
-local pSword;
 
 getgenv().Toggled = false
 
@@ -21,7 +20,7 @@ local welcome_message = general:NewSection("Welcome, " .. game.Players.LocalPlay
 local sword_anims = pilpir:NewSection("Sword Animations")
 local combat = minershaft:NewSection("Combat")
 
--- Items
+-- General
 local nmode = welcome_message:NewToggle("Nigger Mode", "Act like a nigger!", function(state)
 
     getgenv().Toggled = state
@@ -38,12 +37,13 @@ local nmode = welcome_message:NewToggle("Nigger Mode", "Act like a nigger!", fun
     end
 end)
 
+-- Pilfering Pirates
 sword_anims:NewButton("Sword Animation (HALF BROKEN)", "Sword Animation", function(s)
     pSword = lplayer:FindFirstChild("Sword"):FindFirstChild("Handle")
-    pSword.Rotation = Vector3.new(-177, 2, 0)
-    sx = s
+    pSword.Rotation = Vector3.new(-177, 2, 0
 end)
 
+-- MinerShaft
 local killaura = combat:NewToggle("Killaura", "Kill Aura", function(state)
 
     getgenv().Toggled = state
@@ -56,6 +56,6 @@ local killaura = combat:NewToggle("Killaura", "Kill Aura", function(state)
         
         game:GetService("ReplicatedStorage").GameRemotes.Attack:InvokeServer(unpack(args))
         
-        wait(0.25)
+        wait(0.75)
     end
 end)
