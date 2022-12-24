@@ -12,7 +12,8 @@ local pname = game.Players.LocalPlayer.Name
 local kaDistance = 100;
 local kaState = false;
 local bhopState = false;
-local imState = false;
+local brightness = 10;
+local bhopSpeed = 30;
 
 getgenv().Toggled = false
 
@@ -23,19 +24,24 @@ game:GetService("StarterGui"):SetCore("SendNotification",{
 
 -- Tabs
 local general = Window:NewTab("General")
-local pilpir = Window:NewTab("Pilfering Pirates")
 local minershaft = Window:NewTab("MinerShaft")
+local pilpir = Window:NewTab("Pilfering Pirates")
 
 -- Sections
 local welcome_message = general:NewSection("Welcome, " .. game.Players.LocalPlayer.Name .. "!")
 
+local killaurasection = minershaft:NewSection("Killaura")
+local world = minershaft:NewSection("World")
+local movement = minershaft:NewSection("Movement")
+local render = minershaft:NewSection("Render")
+
 local sword_anims = pilpir:NewSection("Sword Animations")
 
-local killaurasection = minershaft:NewSection("Killaura")
-local movement = minershaft:NewSection("Movement")
-local world = minershaft:NewSection("World")
-
 -- General
+welcome_message:NewKeybind("Toggle UI", "Toggle the UI", Enum.KeyCode.End, function()
+	Library:ToggleUI()
+end)
+
 local nmode = welcome_message:NewToggle("Nigger Mode", "Act like a nigger!", function(state)
 
     getgenv().Toggled = state
@@ -84,6 +90,8 @@ killaurasection:NewKeybind("Killaura", "Activate Killaura", Enum.KeyCode.G, func
 
         for _, player in pairs(game:GetService("Players"):GetPlayers()) do
             if player:DistanceFromCharacter(lplayer.HumanoidRootPart.Position) > kaDistance or player.Name == pname then
+                continue
+            else
                 if closest == "" then
                     closest = player
                 else
@@ -91,9 +99,7 @@ killaurasection:NewKeybind("Killaura", "Activate Killaura", Enum.KeyCode.G, func
                         closest = player
                     end
                 end
-                continue
-            else
-                
+
                 local args = {
                     [1] = game:GetService("Players"):FindFirstChild(closest.Name).Character
                 }
@@ -109,29 +115,6 @@ end)
 local kaDistanceSlider = killaurasection:NewSlider("Range", "Set the Range for Killaura", 20, 1, function(s)
     kaDistance = s;
 end)
-
-local kaDistanceSlider = killaurasection:NewSlider("Speed", "Set the Speed for Killaura", 3, 0.1, function(s)
-    kaSpeed = s;
-end)
-
---[[ local infjump = movement:NewToggle("Infinite Jump", "Toggle Infinite Jump", function(state)
-
-    getgenv().Toggled = state
-
-    if getgenv().Toggled then
-        getgenv().Toggled = state
-
-        game:GetService("UserInputService").JumpRequest:connect(function()
-            if getgenv().Toggled then
-                game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass('Humanoid'):ChangeState("Jumping")
-            else
-                game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass('Humanoid'):ChangeState("Landed")
-            end
-        end)
-
-        wait(1)
-    end
-end) ]]
 
 movement:NewKeybind("Bhop", "Bhop", Enum.KeyCode.B, function()
 	if bhopState then
@@ -155,13 +138,38 @@ movement:NewKeybind("Bhop", "Bhop", Enum.KeyCode.B, function()
         end
 
         lplayer.Humanoid.Jump = true
-        lplayer.Humanoid.WalkSpeed = 30
+        lplayer.Humanoid.WalkSpeed = bhopSpeed
         
         wait()
     end
 end)
 
-world:NewButton("Ore Scanner", "Find all ores in a radius", function()
+movement:NewSlider("Bhop Speed", "Set speed for Bhop", 100, 10, function(s)
+    bhopSpeed = s;
+end)
+
+local infjump = movement:NewToggle("Infinite Jump", "Toggle Infinite Jump", function(state)
+
+    getgenv().Toggled = state
+
+    if getgenv().Toggled then
+        game:GetService("UserInputService").JumpRequest:connect(function()
+            if getgenv().Toggled then
+                game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass('Humanoid'):ChangeState("Jumping")
+            else
+                game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass('Humanoid'):ChangeState("Standing")
+            end
+        end)
+
+        wait(1)
+    end
+end)
+
+world:NewButton("Godmode", "Become Jesus Himself", function()
+    SimpleSpy:BlockRemote("Demo")
+end)
+
+render:NewButton("Ore Scanner", "Find all ores in a radius", function()
 
     local ores = Instance.new("Model")
     ores.Name = "Ores"
@@ -180,50 +188,35 @@ world:NewButton("Ore Scanner", "Find all ores in a radius", function()
 
 end)
 
-world:NewButton("Godmode", "Become Jesus Himself", function()
-    SimpleSpy:BlockRemote("Demo")
-end)
+render:NewToggle("Fullbright", "Brighten up the world!", function(state)
+    getgenv().Toggled = state
 
-world:NewKeybind("Insta-mine", "Insta-mine any block", Enum.KeyCode.L, function()
-    if imState then
-        imState = false
-        game:GetService("StarterGui"):SetCore("SendNotification",{
-            Title = "Insta-mine",
-            Text = "Insta-mine Disabled",
-        })
+    if getgenv().Toggled then
+        light = Instance.new("PointLight")
+        light.Brightness = brightness
+        light.Parent = lplayer.HumanoidRootPart
     else
-        imState = true
-        game:GetService("StarterGui"):SetCore("SendNotification",{
-            Title = "Insta-mine",
-            Text = "Insta-mine Enabled",
-        })
+        lplayer.HumanoidRootPart:FindFirstChild("PointLight"):Destroy()
     end
+end)
 
-    while imState do
-        if imState == false then
-            break
+render:NewSlider("Fullbright Brightness", "Adjust the Brightness for Fullbright", 100, 1, function(s)
+    brightness = s;
+end)
+
+render:NewToggle("Player ESP", "Light Up Players", function(state)
+    getgenv().Toggled = state
+
+    if getgenv().Toggled then
+        for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+            esp = Instance.new("Highlight")
+            esp.Name = "esp"
+            esp.FillColor = Color3.new(0, 0, 255)
+            esp.Parent = player.Character
         end
-
-        SimpleSpy:GetRemoteFiredSignal(game:GetService("ReplicatedStorage").GameRemotes.BreakBlock):Connect(function(args)
-            wait(0.5)
-            game:GetService("ReplicatedStorage").GameRemotes.AcceptBreakBlock:InvokeServer()
-        end)
-        
-        wait()
+    else
+        for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+            player.Character:FindFirstChild("esp"):Destroy()
+        end
     end
-end)
-
-world:NewButton("Fullbright", "Brighten up the world!", function()
-    light = Instance.new("PointLight")
-    light.Brightness = 10
-    light.Parent = lplayer.HumanoidRootPart
-end)
-
-local suicide = world:NewButton("Suicide", "Kills the player!", function()
-    local args = {
-        [1] = 1,
-        [2] = "fall"
-    }
-    
-    game:GetService("ReplicatedStorage").GameRemotes.Demo:FireServer(unpack(args))
 end)
