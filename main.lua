@@ -9,9 +9,10 @@ local Window = Library.CreateLib("Drake Hub", "Sentinel")
 local UserInputService = game:GetService("UserInputService")
 local lplayer = game.Workspace:FindFirstChild(game.Players.LocalPlayer.Name)
 local pname = game.Players.LocalPlayer.Name
-local kaDistance = 10;
+local kaDistance = 100;
 local kaState = false;
 local bhopState = false;
+local imState = false;
 
 getgenv().Toggled = false
 
@@ -79,12 +80,22 @@ killaurasection:NewKeybind("Killaura", "Activate Killaura", Enum.KeyCode.G, func
             break
         end
 
+        local closest = "";
+
         for _, player in pairs(game:GetService("Players"):GetPlayers()) do
             if player:DistanceFromCharacter(lplayer.HumanoidRootPart.Position) > kaDistance or player.Name == pname then
+                if closest == "" then
+                    closest = player.Name
+                else
+                    if player:DistanceFromCharacter(lplayer.HumanoidRootPart.Position) < player:DistanceFromCharacter(player.Character.HumanoidRootPart.Position) then
+                        closest = player.Name
+                    end
+                end
                 continue
             else
+                
                 local args = {
-                    [1] = game:GetService("Players"):FindFirstChild(player.Name).Character
+                    [1] = game:GetService("Players"):FindFirstChild(closest).Character
                 }
 
                 game:GetService("ReplicatedStorage").GameRemotes.Attack:InvokeServer(unpack(args))
@@ -171,6 +182,35 @@ end)
 
 world:NewButton("Godmode", "Become Jesus Himself", function()
     SimpleSpy:BlockRemote("Demo")
+end)
+
+world:NewKeybind("Insta-mine", "Insta-mine any block", Enum.KeyCode.L, function()
+    if imState then
+        imState = false
+        game:GetService("StarterGui"):SetCore("SendNotification",{
+            Title = "Insta-mine",
+            Text = "Insta-mine Disabled",
+        })
+    else
+        imState = true
+        game:GetService("StarterGui"):SetCore("SendNotification",{
+            Title = "Insta-mine",
+            Text = "Insta-mine Enabled",
+        })
+    end
+
+    while imState do
+        if imState == false then
+            break
+        end
+
+        SimpleSpy:GetRemoteFiredSignal(game:GetService("ReplicatedStorage").GameRemotes.BreakBlock):Connect(function(args)
+            wait(0.5)
+            game:GetService("ReplicatedStorage").GameRemotes.AcceptBreakBlock:InvokeServer()
+        end)
+        
+        wait()
+    end
 end)
 
 world:NewButton("Fullbright", "Brighten up the world!", function()
