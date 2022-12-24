@@ -85,17 +85,17 @@ killaurasection:NewKeybind("Killaura", "Activate Killaura", Enum.KeyCode.G, func
         for _, player in pairs(game:GetService("Players"):GetPlayers()) do
             if player:DistanceFromCharacter(lplayer.HumanoidRootPart.Position) > kaDistance or player.Name == pname then
                 if closest == "" then
-                    closest = player.Name
+                    closest = player
                 else
-                    if player:DistanceFromCharacter(lplayer.HumanoidRootPart.Position) < player:DistanceFromCharacter(player.Character.HumanoidRootPart.Position) then
-                        closest = player.Name
+                    if player:DistanceFromCharacter(lplayer.HumanoidRootPart.Position) < game.Players.LocalPlayer:DistanceFromCharacter(closest.Character.HumanoidRootPart.Position) then
+                        closest = player
                     end
                 end
                 continue
             else
                 
                 local args = {
-                    [1] = game:GetService("Players"):FindFirstChild(closest).Character
+                    [1] = game:GetService("Players"):FindFirstChild(closest.Name).Character
                 }
 
                 game:GetService("ReplicatedStorage").GameRemotes.Attack:InvokeServer(unpack(args))
