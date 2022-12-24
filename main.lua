@@ -5,15 +5,20 @@ SimpleSpy:ExcludeRemote("GetBiome")
 SimpleSpy:ExcludeRemote("GetChunk")
 
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
-local Window = Library.CreateLib("Drake Hub", "Sentinel")
+local Window = Library.CreateLib("Drake Script", "Sentinel")
 local UserInputService = game:GetService("UserInputService")
 local lplayer = game.Workspace:FindFirstChild(game.Players.LocalPlayer.Name)
 local pname = game.Players.LocalPlayer.Name
+local nmodeState = false;
 local kaDistance = 100;
 local kaState = false;
 local bhopState = false;
 local brightness = 10;
 local bhopSpeed = 30;
+local xrayState = false;
+local infjumpState = false;
+local fullbrightState = false;
+local espState = false;
 
 getgenv().Toggled = false
 
@@ -44,10 +49,10 @@ end)
 
 local nmode = welcome_message:NewToggle("Nigger Mode", "Act like a nigger!", function(state)
 
-    getgenv().Toggled = state
+    nmodeState = state
 
-    while getgenv().Toggled do
-        getgenv().Toggled = state
+    while nmodeState do
+        nmodeState = state
         local args = {
                 [1] = "SOY NEGRO!!!",
                 [2] = "All"
@@ -108,7 +113,7 @@ killaurasection:NewKeybind("Killaura", "Activate Killaura", Enum.KeyCode.G, func
             end
         end
         
-        wait(1)
+        wait(0.6)
     end
 end)
 
@@ -150,11 +155,11 @@ end)
 
 local infjump = movement:NewToggle("Infinite Jump", "Toggle Infinite Jump", function(state)
 
-    getgenv().Toggled = state
+    infjumpState = state
 
-    if getgenv().Toggled then
+    if infjumpState then
         game:GetService("UserInputService").JumpRequest:connect(function()
-            if getgenv().Toggled then
+            if infjumpState then
                 game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass('Humanoid'):ChangeState("Jumping")
             else
                 game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass('Humanoid'):ChangeState("Standing")
@@ -169,29 +174,52 @@ world:NewButton("Godmode", "Become Jesus Himself", function()
     SimpleSpy:BlockRemote("Demo")
 end)
 
-render:NewButton("Ore Scanner", "Find all ores in a radius", function()
+render:NewKeybind("Xray", "Find all ores in a radius", Enum.KeyCode.X, function()
 
-    local ores = Instance.new("Model")
-    ores.Name = "Ores"
-    ores.Parent = game.Workspace:FindFirstChild("Blocks")
-
-    for _, chunk in pairs(game.Workspace:FindFirstChild("Blocks"):GetChildren()) do
-        for _, block in pairs(chunk:GetChildren()) do
-            if block.Name:sub(-string.len("Ore")) == "Ore" then
-                block.Parent = game.Workspace:FindFirstChild("Blocks"):FindFirstChild("Ores")
-            end
-        end
+    if xrayState then
+        xrayState = false
+        game:GetService("StarterGui"):SetCore("SendNotification",{
+            Title = "Xray",
+            Text = "Xray Disabled",
+        })
+    else
+        xrayState = true
+        game:GetService("StarterGui"):SetCore("SendNotification",{
+            Title = "Xray",
+            Text = "Xray Enabled",
+        })
     end
 
-    highlight = Instance.new("Highlight")
-    highlight.Parent = game.Workspace:FindFirstChild("Blocks"):FindFirstChild("Ores")
+    while xrayState do
+        if xrayState == false then
+            break
+        end
+        
+        if not game.Workspace:FindFirstChild("Blocks"):FindFirstChild("Ores") then
+            local ores = Instance.new("Model")
+            ores.Name = "Ores"
+            ores.Parent = game.Workspace:FindFirstChild("Blocks")
 
+            for _, chunk in pairs(game.Workspace:FindFirstChild("Blocks"):GetChildren()) do
+                for _, block in pairs(chunk:GetChildren()) do
+                    if block.Name:sub(-string.len("Ore")) == "Ore" then
+                        block.Parent = game.Workspace:FindFirstChild("Blocks"):FindFirstChild("Ores")
+                    end
+                end
+            end
+
+            highlight = Instance.new("Highlight")
+            highlight.Parent = game.Workspace:FindFirstChild("Blocks"):FindFirstChild("Ores")
+            
+            wait()
+        end
+    end
 end)
 
 render:NewToggle("Fullbright", "Brighten up the world!", function(state)
-    getgenv().Toggled = state
+    fullbrightState = state
 
-    if getgenv().Toggled then
+    if fullbrightState then
         light = Instance.new("PointLight")
         light.Brightness = brightness
         light.Parent = lplayer.HumanoidRootPart
@@ -205,9 +233,9 @@ render:NewSlider("Fullbright Brightness", "Adjust the Brightness for Fullbright"
 end)
 
 render:NewToggle("Player ESP", "Light Up Players", function(state)
-    getgenv().Toggled = state
+    espState = state
 
-    if getgenv().Toggled then
+    if espState then
         for _, player in pairs(game:GetService("Players"):GetPlayers()) do
             esp = Instance.new("Highlight")
             esp.Name = "esp"
