@@ -77,22 +77,6 @@ welcome_message:NewKeybind("Toggle UI", "Toggle the UI", Enum.KeyCode.End, funct
     Library:ToggleUI()
 end)
 
-local nmode = welcome_message:NewToggle("Spam", "Spam the Chat", function(state)
-
-    nmodeState = state
-
-    while nmodeState do
-        nmodeState = state
-        local args = {
-                [1] = "DRAKE SCRIPT BEST SCRIPT",
-                [2] = "All"
-            }
-
-        game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(unpack(args))
-        wait(0.5)
-    end
-end)
-
 -- MinerShaft
 killauraSection:NewKeybind("Killaura", "Activate Killaura", Enum.KeyCode.G, function()
     if kaState then
